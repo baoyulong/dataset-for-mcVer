@@ -1,6 +1,6 @@
 # Readme
 
-The project includs the dataset for the manuscript  < **A Model Checking Based Framework for Smart Contract Verification** >. The contents contained in each folder are explained as follows：
+The project includs the dataset for the manuscript  < **mcVer: A Model Checking Based Framework for Smart Contract Verification** >. The contents contained in each folder are explained as follows：
 
 - VVMExample
   - In this folder, the vvm( VVMExample.vvm ) code of the example for inlustrating the composition of VML are included.
