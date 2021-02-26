@@ -1,0 +1,3 @@
+p0:constructor(1,0,1)
+p1:bid(2,2)|p2:bid(3,3)|p3:bid(4,4)
+p3:auctionend(1,0)

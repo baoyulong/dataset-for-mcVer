@@ -1,0 +1,16 @@
+mstruct *model2mstruct(model *mm);
+mdata *create_mdata(model *mm);
+void freemdata(mstruct *cc,mdata *wc,int n);
+int eqsimp(model *mm);
+int modelcleaneq(model *mm,mstruct *cc,mdata *mc,int *cl);
+int *modelsimplifybin(model *mm,mstruct *cc,mdata *mc,int *cl);
+int fnd2b2(int i,int a,int b,mstruct *cc,int *cl);
+int fnd2b(int i,int a,int b,mstruct *cc,int *cl,int *nFnd);
+void replaceclause(int i,int c,mstruct *cc);
+int eqcycle(int *a,int *b);
+void modelcompresseq(model *mm,mstruct *cc,mdata *wc,int *cl,int *n1,int *n2);
+void writelog(char *s,int *y);
+int *unitclauses(mstruct *cc,mdata *wc,int *cl,int m,int *unit);
+int unitp(mstruct *cc,mdata *wc,int *cl,int *cur);
+int usimp(model *mm);
+void modelcompress(model *mm,mstruct *cc,mdata *wc,int *cl);

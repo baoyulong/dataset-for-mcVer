@@ -1,0 +1,31 @@
+VVM	me003 // 2 processes - 1 module
+VAR	
+	x: 0..1;
+	y: 0..1;
+	t: 0..1;
+INIT	
+	x=0;
+	y=0;
+	t=0;
+PROC
+	p0: p0m(x,y,t,0);
+	p1: p0m(y,x,t,1);
+SPEC 
+        AG(!(p0.a=s2&p1.a=s2));
+        AG((!p0.a=s1|AF(p0.a=s2|p1.a=s2))&(!p1.a=s1|AF(p0.a=s2|p1.a=s2)));
+        AG((!p0.a=s1|AF(p0.a=s2))&(!p1.a=s1|AF(p1.a=s2)));
+        AG((!p0.a=s1|EF(p0.a=s2))&(!p1.a=s1|EF(p1.a=s2)));
+
+MODULE	p0m(x,y,t,i)
+VAR 
+	a: {s0,s1,s2,s3};
+INIT
+	a=s0;
+TRANS 	
+	a=s0:		(y,t,a):=(1,1-i,s1);
+	a=s1&(x=0|t=i):	(a):=(s2);
+	a=s1&!(x=0|t=i):(a):=(s1);
+	a=s2:		(y,a):=(0,s3);
+	a=s2:		(a):=(s2);
+	a=s3:		(y,t,a):=(1,1-i,s1); 
+

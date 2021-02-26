@@ -1,0 +1,167 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+totalbids:0..10;
+startingprice:0..10;
+currentbid:0..10;
+currentminbid:0..10;
+auctionend:0..10;
+hotpotatoprize:0..10;
+seller:0..5;
+highbidder:0..5;
+loser:0..5;
+balanceof[0..5]:0..10;
+
+order:0..2;
+level0:0..1;
+level1:0..3;
+
+sta_1:0..1;
+end_1:0..1;
+rcv_1:0..5;
+amount_1:0..10;
+rtv_1:0..1;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+totalbids=0;
+startingprice=0;
+currentbid=0;
+currentminbid=0;
+auctionend=0;
+hotpotatoprize=0;
+seller=0;
+highbidder=0;
+loser=0;
+for(p:[0..5]){balanceof[p]=0};
+
+order=0;
+level0=0;
+level1=0;
+
+sta_1=0;
+end_1=0;
+rcv_1=0;
+amount_1=0;
+rtv_1=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,0,1,7);
+p1:bid(2,3,4);
+p2:bid(3,4,4);
+p3:bid(4,5,4);
+s0:send_1();
+
+
+ SPEC
+AG(!(order=2)|((highbidder = 2 | highbidder = 3 | highbidder = 4));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=3)&(order=1):(order=2);
+
+ MODULE constructor(msg_sender,msg_value,_startingprice,_auctionend)
+ VAR 
+pc_constructor:0..9;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1):(pc_constructor=2)&(startingprice=_startingprice);
+(pc_constructor=2):(pc_constructor=3)&(currentminbid=_startingprice);
+(pc_constructor=3):(pc_constructor=4)&(totalbids=0);
+(pc_constructor=4):(pc_constructor=5)&(seller=msg_sender);
+(pc_constructor=5):(pc_constructor=6)&(auctionend=_auctionend);
+(pc_constructor=6):(pc_constructor=7)&(hotpotatoprize=_startingprice);
+(pc_constructor=7):(pc_constructor=8)&(currentbid=0);
+(pc_constructor=8):(pc_constructor=9)&(process_control=1)&(level0=level0+1);
+
+ MODULE bid(msg_sender,msg_value,block_timestamp)
+ VAR 
+amount:0..10;
+pc_bid:0..20;
+
+ INIT 
+pc_bid=0;
+ TRANS
+(pc_bid=0)&(process_control=1)&(order=1):(pc_bid=1)&(process_control=0);
+ (pc_bid=1)&(block_timestamp<auctionend):(pc_bid=2);
+(pc_bid=2)&(msg_value>=startingprice):(pc_bid=3);
+(pc_bid=3)&(msg_value>=currentminbid):(pc_bid=4);
+(pc_bid=4)&(totalbids!=0):(pc_bid=5);
+(pc_bid=5):(pc_bid=6)&(loser=highbidder);
+(pc_bid=6):(pc_bid=7)&(amount=balanceof[loser]);
+(pc_bid=7):(pc_bid=8)&(balanceof[loser]=0);
+(pc_bid=8):(pc_bid=9)&(rcv_1=loser)&(amount_1=amount)&(sta_1=1);
+(pc_bid=9)&(end_1=1):(pc_bid=10)&(end_1=0);
+(pc_bid=10)&(rtv_1=1):(pc_bid=11);
+
+(pc_bid=4)&!(totalbids!=0):(pc_bid=11);
+(pc_bid=11):(pc_bid=12)&(highbidder=msg_sender);
+(pc_bid=12):(pc_bid=13)&(currentbid=msg_value);
+(pc_bid=13):(pc_bid=14)&(hotpotatoprize=currentbid/2);
+(pc_bid=14):(pc_bid=15)&(balanceof[msg_sender]=msg_value+hotpotatoprize);
+(pc_bid=15)&(currentbid<5):(pc_bid=16);
+(pc_bid=16):(pc_bid=17)&(currentminbid=msg_value+currentbid/2);
+(pc_bid=17):(pc_bid=18)&(hotpotatoprize=currentbid/2);
+
+(pc_bid=18)&!(currentbid<5):(pc_bid=19);
+(pc_bid=19):(pc_bid=20)&(currentminbid=msg_value+currentbid);
+(pc_bid=20):(pc_bid=21)&(hotpotatoprize=currentbid/2);
+
+(pc_bid=18):(pc_bid=19)&(totalbids=totalbids+1);
+(pc_bid=1)&!(block_timestamp<auctionend):(pc_bid=19);
+(pc_bid=2)&!(msg_value>=startingprice):(pc_bid=19);
+(pc_bid=3)&!(msg_value>=currentminbid):(pc_bid=19);
+(pc_bid=10)&!(rtv_1=1):(pc_bid=19);
+(pc_bid=19):(pc_bid=20)&(process_control=1)&(level1=level1+1);
+
+ MODULE send_1()
+ 
+ VAR
+pc_send1:0..4;
+ 
+ INIT
+pc_send1=0;
+ 
+ TRANS
+(pc_send1=0)&(sta_1=1):(pc_send1=1);
+(pc_send1=1):(pc_send1=2)&(rtv_1=1);
+(pc_send1=1):(pc_send1=2)&(rtv_1=0);
+(pc_send1=2)&(rtv_1=1):(pc_send1=3);
+(pc_send1=3)&(rcv_1=0):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[0]=balance[0]+amount_1);
+(pc_send1=3)&(rcv_1=1):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[1]=balance[1]+amount_1);
+(pc_send1=3)&(rcv_1=2):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[2]=balance[2]+amount_1);
+(pc_send1=3)&(rcv_1=3):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[3]=balance[3]+amount_1);
+(pc_send1=3)&(rcv_1=4):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[4]=balance[4]+amount_1);
+(pc_send1=3)&(rcv_1=5):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[5]=balance[5]+amount_1);
+(pc_send1=3)&(rcv_1=6):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[6]=balance[6]+amount_1);
+(pc_send1=3)&(rcv_1=7):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[7]=balance[7]+amount_1);
+(pc_send1=3)&(rcv_1=8):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[8]=balance[8]+amount_1);
+(pc_send1=3)&(rcv_1=9):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[9]=balance[9]+amount_1);
+(pc_send1=3)&(rcv_1=10):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[10]=balance[10]+amount_1);
+(pc_send1=3)&(rcv_1=11):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[11]=balance[11]+amount_1);
+(pc_send1=3)&(rcv_1=12):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[12]=balance[12]+amount_1);
+(pc_send1=3)&(rcv_1=13):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[13]=balance[13]+amount_1);
+(pc_send1=3)&(rcv_1=14):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[14]=balance[14]+amount_1);
+(pc_send1=3)&(rcv_1=15):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[15]=balance[15]+amount_1);
+(pc_send1=2)&(rtv_1=0):(pc_send1=4);
+(pc_send1=4):(pc_send1=0)&(end_1=1)&(sta_1=0);

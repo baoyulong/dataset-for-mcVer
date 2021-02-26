@@ -1,0 +1,1 @@
+All-Runs Globally (End Imply (winnerAddr = 2 Or winnerAddr = 3 Or winnerAddr = 4))

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"> <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;700&display=swap');
+* {
+padding: 0;
+margin: 0;
+font-family: 'Noto Sans TC', sans-serif;
+} .wrap {
+margin: 100px 0;
+}
+.container {
+width: 1200px;
+margin: auto;
+display: flex;
+box-shadow: 0 0 30px #ccc;
+justify-content: flex-end;
+position: relative;
+overflow: hidden;
+} .container h1 {
+flex-shrink: 0;
+box-sizing: border-box;
+font-size: 220px;
+padding-left: 15px;
+color: #fff;
+position: absolute;
+left: 0;
+top: 0;
+line-height: .6em;
+text-shadow: 20px 20px 0 #eee;
+} .container .txt {
+width: 600px;
+flex-shrink: 0;
+box-sizing: border-box;
+column-count: 1;
+column-gap: 30px;
+padding: 15px;
+position: relative;
+z-index: 1;
+}     .container .txt p {
+white-space:pre;
+margin-bottom: 1em;
+text-align: left;
+}
+</style><title>Counter-Example</title>
+</head>
+<body>
+<div class="wrap">
+<div class="container">
+<h1>Counter Example</h1> <div class="txt">
+<h2>Process Execution Trace</h2>
+<br>
+<br>
+<p>p0.constructor->p3.bid->p2.bid->p1.bid</p>
+<br>
+<h2>Process Input Order</h2>
+<p>
+p0:constructor(1,2,8,7)
+p1:bid(2,3,4)|p2:bid(3,4,4)|p3:bid(4,5,4)
+</p>
+<h2>Property Input</h2>
+<p>
+All-Runs Globally (End Imply winner = 4)
+</p>
+</div>
+<div class="txt">
+<p>
+<font color=#FF0000>p0    constructor(uint _timestampEnd, uint _price){
+</font><font color=#FF0000>p0      timestampEnd = _timestampEnd;
+</font><font color=#FF0000>p0      initialPrice = true;
+</font><font color=#FF0000>p0      price = _price;
+</font><font color=#FF0000>p0    }
+</font><font color=#FF0000>p3    function bid(uint256 block_timestamp) public payable {
+</font><font color=#FF0000>p3      require(block_timestamp < timestampEnd);
+</font><font color=#FF0000>p3      if (bids[msg.sender] > 0) {
+</font>          bids[msg.sender] += msg.value;
+        }
+<font color=#FF0000>p3      if (bids[msg.sender] <= 0) {
+</font><font color=#FF0000>p3        bids[msg.sender] = msg.value;
+</font>        }
+<font color=#FF0000>p3      if (initialPrice) {
+</font><font color=#FF0000>p3        require(bids[msg.sender] >= price);
+</font>        } 
+        if(!initialPrice) {
+          require(bids[msg.sender] >= price +2 );
+        }
+        
+        if (block_timestamp > timestampEnd - timeBound) {
+          timestampEnd = block_timestamp + increaseTimeBy;
+        }
+        initialPrice = false;
+        price= bids[msg.sender];
+        winner = msg.sender;
+<font color=#FF0000>p3  }
+</font><font color=#FF0000>p2    function bid(uint256 block_timestamp) public payable {
+</font><font color=#FF0000>p2      require(block_timestamp < timestampEnd);
+</font><font color=#FF0000>p2      if (bids[msg.sender] > 0) {
+</font>          bids[msg.sender] += msg.value;
+        }
+<font color=#FF0000>p2      if (bids[msg.sender] <= 0) {
+</font><font color=#FF0000>p2        bids[msg.sender] = msg.value;
+</font>        }
+<font color=#FF0000>p2      if (initialPrice) {
+</font><font color=#FF0000>p2        require(bids[msg.sender] >= price);
+</font>        } 
+        if(!initialPrice) {
+          require(bids[msg.sender] >= price +2 );
+        }
+        
+        if (block_timestamp > timestampEnd - timeBound) {
+          timestampEnd = block_timestamp + increaseTimeBy;
+        }
+        initialPrice = false;
+        price= bids[msg.sender];
+        winner = msg.sender;
+<font color=#FF0000>p2  }
+</font><font color=#FF0000>p1    function bid(uint256 block_timestamp) public payable {
+</font><font color=#FF0000>p1      require(block_timestamp < timestampEnd);
+</font><font color=#FF0000>p1      if (bids[msg.sender] > 0) {
+</font>          bids[msg.sender] += msg.value;
+        }
+<font color=#FF0000>p1      if (bids[msg.sender] <= 0) {
+</font><font color=#FF0000>p1        bids[msg.sender] = msg.value;
+</font>        }
+<font color=#FF0000>p1      if (initialPrice) {
+</font><font color=#FF0000>p1        require(bids[msg.sender] >= price);
+</font>        } 
+        if(!initialPrice) {
+          require(bids[msg.sender] >= price +2 );
+        }
+        
+        if (block_timestamp > timestampEnd - timeBound) {
+          timestampEnd = block_timestamp + increaseTimeBy;
+        }
+        initialPrice = false;
+        price= bids[msg.sender];
+        winner = msg.sender;
+<font color=#FF0000>p1  }
+</font></p>
+</div></div>
+</div>
+</body>
+</html>

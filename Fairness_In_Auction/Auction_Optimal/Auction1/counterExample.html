@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"> <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;700&display=swap');
+* {
+padding: 0;
+margin: 0;
+font-family: 'Noto Sans TC', sans-serif;
+} .wrap {
+margin: 100px 0;
+}
+.container {
+width: 1200px;
+margin: auto;
+display: flex;
+box-shadow: 0 0 30px #ccc;
+justify-content: flex-end;
+position: relative;
+overflow: hidden;
+} .container h1 {
+flex-shrink: 0;
+box-sizing: border-box;
+font-size: 220px;
+padding-left: 15px;
+color: #fff;
+position: absolute;
+left: 0;
+top: 0;
+line-height: .6em;
+text-shadow: 20px 20px 0 #eee;
+} .container .txt {
+width: 600px;
+flex-shrink: 0;
+box-sizing: border-box;
+column-count: 1;
+column-gap: 30px;
+padding: 15px;
+position: relative;
+z-index: 1;
+}     .container .txt p {
+white-space:pre;
+margin-bottom: 1em;
+text-align: left;
+}
+</style><title>Counter-Example</title>
+</head>
+<body>
+<div class="wrap">
+<div class="container">
+<h1>Counter Example</h1> <div class="txt">
+<h2>Process Execution Trace</h2>
+<br>
+<br>
+<p>p0.constructor->p3.bid->p2.bid->p1.bid</p>
+<br>
+<h2>Process Input Order</h2>
+<p>
+p0:constructor(1,5,5,3)
+p1:bid(2,2,2,2)|p2:bid(3,3,3,2)|p3:bid(4,4,4,2)
+</p>
+<h2>Property Input</h2>
+<p>
+All-Runs Globally (End Imply winnerAddr = 4)
+</p>
+</div>
+<div class="txt">
+<p>
+<font color=#FF0000>p0  constructor(uint256 _endTime, uint256 block_timestamp){
+</font><font color=#FF0000>p0    winnerAddr = msg.sender;
+</font><font color=#FF0000>p0    price = msg.value;
+</font><font color=#FF0000>p0    endTime = block_timestamp + _endTime;
+</font><font color=#FF0000>p0  }
+</font><font color=#FF0000>p3  function bid(uint256 _price, uint256 block_timestamp) public payable{
+</font><font color=#FF0000>p3    if(msg.value > 0){
+</font><font color=#FF0000>p3      userEtherOf[msg.sender] = userEtherOf[msg.sender] + msg.value;
+</font><font color=#FF0000>p3      if(_price >= 1){
+</font><font color=#FF0000>p3        if(userEtherOf[msg.sender] >= _price){
+</font><font color=#FF0000>p3          if(block_timestamp < endTime){
+</font><font color=#FF0000>p3            if(_price > price) {
+</font>                userEtherOf[msg_sender] = userEtherOf[msg.sender] - _price;
+                userEtherOf[winnerAddr] = userEtherOf[winnerAddr] + price;
+                price = _price;
+                winnerAddr = msg.sender;
+              }
+            }
+          }
+        }
+      }
+<font color=#FF0000>p3  }
+</font><font color=#FF0000>p2  function bid(uint256 _price, uint256 block_timestamp) public payable{
+</font><font color=#FF0000>p2    if(msg.value > 0){
+</font><font color=#FF0000>p2      userEtherOf[msg.sender] = userEtherOf[msg.sender] + msg.value;
+</font><font color=#FF0000>p2      if(_price >= 1){
+</font><font color=#FF0000>p2        if(userEtherOf[msg.sender] >= _price){
+</font><font color=#FF0000>p2          if(block_timestamp < endTime){
+</font><font color=#FF0000>p2            if(_price > price) {
+</font>                userEtherOf[msg_sender] = userEtherOf[msg.sender] - _price;
+                userEtherOf[winnerAddr] = userEtherOf[winnerAddr] + price;
+                price = _price;
+                winnerAddr = msg.sender;
+              }
+            }
+          }
+        }
+      }
+<font color=#FF0000>p2  }
+</font><font color=#FF0000>p1  function bid(uint256 _price, uint256 block_timestamp) public payable{
+</font><font color=#FF0000>p1    if(msg.value > 0){
+</font><font color=#FF0000>p1      userEtherOf[msg.sender] = userEtherOf[msg.sender] + msg.value;
+</font><font color=#FF0000>p1      if(_price >= 1){
+</font><font color=#FF0000>p1        if(userEtherOf[msg.sender] >= _price){
+</font><font color=#FF0000>p1          if(block_timestamp < endTime){
+</font><font color=#FF0000>p1            if(_price > price) {
+</font>                userEtherOf[msg_sender] = userEtherOf[msg.sender] - _price;
+                userEtherOf[winnerAddr] = userEtherOf[winnerAddr] + price;
+                price = _price;
+                winnerAddr = msg.sender;
+              }
+            }
+          }
+        }
+      }
+<font color=#FF0000>p1  }
+</font></p>
+</div></div>
+</div>
+</body>
+</html>

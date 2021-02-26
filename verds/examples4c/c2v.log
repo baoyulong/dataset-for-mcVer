@@ -1,0 +1,7 @@
+IGNORED: printf("INFO:   system is now active\n",0)
+IGNORED: printf("RESULT: %i\n\n",m)
+IGNORED: putc('N',stdout)
+IGNORED: putc(':',stdout)
+IGNORED: putc(9,stdout)
+IGNORED: printf("INFO:   the input must be a digit\n\n")
+IGNORED: printf("INFO:   the input must be 1 digit\n\n")

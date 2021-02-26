@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge"> <style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;700&display=swap');
+* {
+padding: 0;
+margin: 0;
+font-family: 'Noto Sans TC', sans-serif;
+} .wrap {
+margin: 100px 0;
+}
+.container {
+width: 1200px;
+margin: auto;
+display: flex;
+box-shadow: 0 0 30px #ccc;
+justify-content: flex-end;
+position: relative;
+overflow: hidden;
+} .container h1 {
+flex-shrink: 0;
+box-sizing: border-box;
+font-size: 220px;
+padding-left: 15px;
+color: #fff;
+position: absolute;
+left: 0;
+top: 0;
+line-height: .6em;
+text-shadow: 20px 20px 0 #eee;
+} .container .txt {
+width: 600px;
+flex-shrink: 0;
+box-sizing: border-box;
+column-count: 1;
+column-gap: 30px;
+padding: 15px;
+position: relative;
+z-index: 1;
+}     .container .txt p {
+white-space:pre;
+margin-bottom: 1em;
+text-align: left;
+}
+</style><title>Counter-Example</title>
+</head>
+<body>
+<div class="wrap">
+<div class="container">
+<h1>Counter Example</h1> <div class="txt">
+<h2>Process Execution Trace</h2>
+<br>
+<br>
+<p>p0.constructor->p1.startauction->p4.bid->p3.bid->p2.bid</p>
+<br>
+<h2>Process Input Order</h2>
+<p>
+p0:constructor(1,0)
+p1:startAuction(1,1,1)
+p2:bid(2,2,2)|p3:bid(3,3,2)|p4:bid(4,4,2)
+</p>
+<h2>Property Input</h2>
+<p>
+All-Runs Globally (End Imply highestBidder = 4)
+</p>
+</div>
+<div class="txt">
+<p>
+<font color=#FF0000>p0  constructor() public{
+</font><font color=#FF0000>p0    auctioneer = msg.sender;
+</font><font color=#FF0000>p0  }
+</font><font color=#FF0000>p1  function startAuction(uint block_timestamp) public payable{
+</font><font color=#FF0000>p1    require(!auctionStarted);
+</font><font color=#FF0000>p1    require(msg.sender == auctioneer);
+</font><font color=#FF0000>p1    require(msg.value == 1);
+</font>      
+<font color=#FF0000>p1    auctionedEth = msg.value;
+</font><font color=#FF0000>p1    auctionStarted = true;
+</font><font color=#FF0000>p1    auctionEndTime = block_timestamp + 5; // Ends 7 days after the deployment of the contract
+</font><font color=#FF0000>p1  }
+</font><font color=#FF0000>p4  function bid(uint block_timestamp) public payable {
+</font><font color=#FF0000>p4    require(auctionStarted);
+</font><font color=#FF0000>p4    require(block_timestamp < auctionEndTime);
+</font><font color=#FF0000>p4    require(msg.sender != auctioneer);
+</font><font color=#FF0000>p4    require(highestBidder != msg.sender); //If sender is already the highest bidder, reject it.
+</font>  
+<font color=#FF0000>p4    address _newBidder = msg.sender;
+</font>  
+<font color=#FF0000>p4    uint previousBid = balances[msg.sender];
+</font><font color=#FF0000>p4    uint _newBid = msg.value + previousBid;
+</font>  
+<font color=#FF0000>p4    require (_newBid  == highestBid + 2); //Each bid has to be 2 eth higher
+</font>  
+      // The highest bidder is block_timestamp the second highest bidder
+      secondHighestBid = highestBid;
+      secondHighestBidder = highestBidder;
+  
+      highestBid = _newBid;
+      highestBidder = msg.sender;
+  
+      latestBidTime = block_timestamp;
+      //Update the bidder's balance so they can later withdraw any pending balance
+      balances[msg.sender] = _newBid;
+  
+      //If there's less than an hour remaining and someone bids, extend end time.
+      if(auctionEndTime - block_timestamp < 1){
+        auctionEndTime += 1; // Each bid extends the auctionEndTime by 1 hour
+      }
+<font color=#FF0000>p4  }
+</font><font color=#FF0000>p3  function bid(uint block_timestamp) public payable {
+</font><font color=#FF0000>p3    require(auctionStarted);
+</font><font color=#FF0000>p3    require(block_timestamp < auctionEndTime);
+</font><font color=#FF0000>p3    require(msg.sender != auctioneer);
+</font><font color=#FF0000>p3    require(highestBidder != msg.sender); //If sender is already the highest bidder, reject it.
+</font>  
+<font color=#FF0000>p3    address _newBidder = msg.sender;
+</font>  
+<font color=#FF0000>p3    uint previousBid = balances[msg.sender];
+</font><font color=#FF0000>p3    uint _newBid = msg.value + previousBid;
+</font>  
+<font color=#FF0000>p3    require (_newBid  == highestBid + 2); //Each bid has to be 2 eth higher
+</font>  
+      // The highest bidder is block_timestamp the second highest bidder
+      secondHighestBid = highestBid;
+      secondHighestBidder = highestBidder;
+  
+      highestBid = _newBid;
+      highestBidder = msg.sender;
+  
+      latestBidTime = block_timestamp;
+      //Update the bidder's balance so they can later withdraw any pending balance
+      balances[msg.sender] = _newBid;
+  
+      //If there's less than an hour remaining and someone bids, extend end time.
+      if(auctionEndTime - block_timestamp < 1){
+        auctionEndTime += 1; // Each bid extends the auctionEndTime by 1 hour
+      }
+<font color=#FF0000>p3  }
+</font><font color=#FF0000>p2  function bid(uint block_timestamp) public payable {
+</font><font color=#FF0000>p2    require(auctionStarted);
+</font><font color=#FF0000>p2    require(block_timestamp < auctionEndTime);
+</font><font color=#FF0000>p2    require(msg.sender != auctioneer);
+</font><font color=#FF0000>p2    require(highestBidder != msg.sender); //If sender is already the highest bidder, reject it.
+</font>  
+<font color=#FF0000>p2    address _newBidder = msg.sender;
+</font>  
+<font color=#FF0000>p2    uint previousBid = balances[msg.sender];
+</font><font color=#FF0000>p2    uint _newBid = msg.value + previousBid;
+</font>  
+<font color=#FF0000>p2    require (_newBid  == highestBid + 2); //Each bid has to be 2 eth higher
+</font>  
+      // The highest bidder is block_timestamp the second highest bidder
+<font color=#FF0000>p2    secondHighestBid = highestBid;
+</font><font color=#FF0000>p2    secondHighestBidder = highestBidder;
+</font>  
+<font color=#FF0000>p2    highestBid = _newBid;
+</font><font color=#FF0000>p2    highestBidder = msg.sender;
+</font>  
+<font color=#FF0000>p2    latestBidTime = block_timestamp;
+</font>      //Update the bidder's balance so they can later withdraw any pending balance
+<font color=#FF0000>p2    balances[msg.sender] = _newBid;
+</font>  
+      //If there's less than an hour remaining and someone bids, extend end time.
+<font color=#FF0000>p2    if(auctionEndTime - block_timestamp < 1){
+</font>        auctionEndTime += 1; // Each bid extends the auctionEndTime by 1 hour
+      }
+<font color=#FF0000>p2  }
+</font></p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,3 @@
+Valuation(1)=2
+Valuation(2)=3
+Valuation(3)=4

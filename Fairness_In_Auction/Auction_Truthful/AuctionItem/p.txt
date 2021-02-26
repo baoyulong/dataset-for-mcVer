@@ -1,0 +1,1 @@
+All-Runs Globally (End Imply (highBidder = 2 Or highBidder = 3 Or highBidder = 4))

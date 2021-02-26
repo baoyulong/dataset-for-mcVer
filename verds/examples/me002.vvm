@@ -1,0 +1,43 @@
+VVM	me002 // 2 processes
+VAR	
+	x: 0..1;
+	y: 0..1;
+	t: 0..1;
+INIT	
+	x=0;
+	y=0;
+	t=0;
+PROC
+	p0: p0m();
+	p1: p1m();
+SPEC 
+        AG(!(p0.a=s2&p1.b=t2));
+        AG((!p0.a=s1|AF(p0.a=s2|p1.b=t2))&(!p1.b=t1|AF(p0.a=s2|p1.b=t2)));
+        AG((!p0.a=s1|AF(p0.a=s2))&(!p1.b=t1|AF(p1.b=t2)));
+        AG((!p0.a=s1|EF(p0.a=s2))&(!p1.b=t1|EF(p1.b=t2)));
+
+MODULE	p0m()
+VAR 
+	a: {s0,s1,s2,s3};
+INIT
+	a=s0;
+TRANS 	
+	a=s0:		(y,t,a):=(1,1,s1);
+	a=s1&(x=0|t=0):	(a):=(s2);
+	a=s1&!(x=0|t=0):(a):=(s1);
+	a=s2:		(y,a):=(0,s3);
+	a=s2:		(a):=(s2);
+	a=s3:		(y,t,a):=(1,1,s1); 
+
+MODULE	p1m()
+VAR 
+	b: {t0,t1,t2,t3};
+INIT
+	b=t0;
+TRANS 	
+	b=t0:		(x,t,b):=(1,0,t1);
+	b=t1&(y=0|t=1): (b):=(t2);
+	b=t1&!(y=0|t=1):(b):=(t1);
+	b=t2:		(x,b):=(0,t3);
+	b=t2:		(b):=(t2);
+	b=t3:		(x,t,b):=(1,0,t1);

@@ -1,0 +1,17 @@
+TBDprg *prg2t(prg *prg1,char **v);
+TBDprg *bp2t(tree *init,tree *fness,process **prs,char **v,int booln);
+TBDprg *TBDprginitialize(char **v,int n);
+int TBDtreelength(tree *trs,char *del);
+int TBDlistlength(tree *t1);
+tree *TBDlistgetone(tree *t,int next);
+tree *getprocedurename(prg *pr);
+TBDtrs **TPatrs(process **prs,TBDprg *lggt);
+TBD **TPafair(tree *fn,TBDprg *lggt);
+TBD *TPainit(tree *init,TBDprg *lggt);
+TBD *TPfml(TBDprg *lggt,tree *p);
+void TPtrs(TBDtrs **trs,process **prs,TBDprg *lggt,int bw);
+TBD *TPtrstc(TBD **btt,char *uclist,int n);
+void TPvar(TBDprg *jj,int bw);
+void TPsv1(char **a,int *b,int l,int r) /* increasing */;
+int TPsnm(char *s,char **a,int *b,int l,int r);
+TBD *TPtbdvar(TBDprg *jj,char *var);

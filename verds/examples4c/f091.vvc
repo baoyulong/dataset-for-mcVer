@@ -1,0 +1,65 @@
+/**********************************************/
+	 main()
+	{
+pc=0:	printf("INFO:   system is now active\n",0);
+pc=1:	while ((1))
+	{
+pc=2:	n=in();
+pc=3:	m=f91(n);
+pc=4:	printf("RESULT: %i\n\n",m);
+	}
+	}
+/**********************************************/
+	int in()
+	{
+pc=0:	while ((1))
+	{
+pc=1:	putc('N',stdout);
+pc=2:	putc(':',stdout);
+pc=3:	putc(9,stdout);
+pc=4:	c=getc(stdin);
+pc=5:	if ((c<'0' |c>'9'))
+	{
+pc=6:	while ((1))
+	{
+pc=7:	c=getc(stdin);
+pc=8:	if ((c ='\n'))
+pc=9:	break;
+	}
+pc=10:	printf("INFO:   the input must be a digit\n\n");
+pc=11:	continue;
+	}
+pc=12:	d=getc(stdin);
+pc=13:	if ((d ='\n'))
+	{
+pc=14:	return c-'0';
+	}
+pc=15:	printf("INFO:   the input must be 1 digit\n\n");
+	}
+	}
+/**********************************************/
+	int f91()
+	{
+pc=0:	while ((1))
+	{
+pc=1:	if ((y1>100))
+	{
+pc=2:	if ((y2!=1))
+	{
+pc=3:	y1=y1-10;
+pc=4:	y2=y2-1;
+	}
+pc=2:	else 			/* !((y2!=1)) */
+	{
+pc=5:	z=y1-10;
+pc=6:	break;
+	}
+	}
+pc=1:	else 			/* !((y1>100)) */
+	{
+pc=8:	y1=y1+11;
+pc=9:	y2=y2+1;
+	}
+	}
+pc=11:	return z;
+	}

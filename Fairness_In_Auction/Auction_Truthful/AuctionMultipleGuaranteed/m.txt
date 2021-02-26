@@ -1,0 +1,2 @@
+p0:constructor(1,2,8,1)
+p1:bid(2,3,4)|p2:bid(3,4,4)|p3:bid(4,5,4)

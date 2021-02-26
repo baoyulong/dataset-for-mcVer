@@ -1,0 +1,48 @@
+q0cnf.h:typedef struct _qmdata {
+q0cnf.h:        struct _qmdata *q;
+q0cnf.h:        struct _qmdata *next;
+q0cnf.h:} qmdata;
+wfbmc.h:void qmdwritecnf(qmdata *qm,qinfo *qi,FILE *g);
+wfbmc.h:model *qmd2model(qmdata *qm,qinfo *qi);
+wfbmc.h:int SOLVEapplyq(char *solver,qmdata *qm,qinfo *qi,int bv);
+wfbmc.h:int qm2file(qmdata *qm,qinfo *qi,int bv,int k);
+wfbp2q.h:qmdata *bp2q(qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int bv);;
+wfbp2q.h:qmdata *bp2q(qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int bv);
+wfbp2q.h:qmdata *bp2q0(qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int cur,int lv);
+wfbp2q.h:qmdata *bp2qEA(char ea,qinfo *qi,int booln,int k,int cur,int cur1,int lv,qmdata *m0,qmdata *m1);
+wfbp2q.h:qmdata *bp2qFG(qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int cur,int cur1,int lv,qmdata *ek);
+wfbp2q.h:qmdata *bp2qUR(qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int cur,int cur1,int lv,int start,qmdata *ek);
+wfbp2q.h:qmdata *bp2qGFFG(char dc,qinfo *qi,tree *bp,tree *fness,tree *bs,int booln,int k,int cur,int cur1,int lv,int start,int start2,qmdata *ek);
+wfbp2q.h:qmdata *bp2qfpc(char ea,qinfo *qi,tree *bp,tree *fness,int booln,int k,int cur,int cur1,int lv,int start);
+wfbp2q.h:qmdata *bp2qsfpc(qinfo *qi,tree *bp,tree *fness,tree **fn,int booln,int k,int cur,int cur1,int lv,int start);
+wfbp2q.h:qmdata *bp2qntm(int booln,int k,int cur,int cur1,int i,int x,int y);
+wfbp2q.h:qmdata *bp2qwfpc(qinfo *qi,tree *bp,tree *fness,tree **fn,int booln,int k,int cur,int cur1,int lv,int start);
+wfbp2q.h:qmdata *bp2qPATH(qinfo *qi,tree *bp,int booln,int k,int cur,int lev);
+wfbp2q.h:qmdata *bp2qeqPATH(int a,int b,int c,int booln);
+wfbp2q.h:qmdata *tree2md(tree *t);
+wfbp2q.h:qmdata *mdnegate(qmdata *m0);
+wfbp2q.h:void mdstep1(qmdata *m0,int i,int j,int booln);
+wfbp2q.h:qmdata *mdcompose(int a,qmdata *m0,qmdata *m1);
+wfbp2q.h:tree *md2tree(qmdata *md);
+wfbp2q.h:tree *maketree2(char *c,qmdata *q1,qmdata *qn);
+wfbp2q.h:int md2treetype(qmdata *md);
+wfq0cnf.h:void freeqmdata(qmdata *md);
+wfq0cnf.h:int qmdwrite(qmdata *md,qinfo *qi,FILE *g);
+wfq0cnf.h:int qmdwrite1(qmdata *md,FILE *g,int mode);
+wfq0cnf.h:void qmdsimp(qmdata *md,qinfo *qi);
+wfq0cnf.h:void mdmoveup1(qmdata *md0,qmdata *md,qmdata *mdq);
+wfq0cnf.h:int qmdlen(qmdata *md);
+wfq0cnf.h:int qmdm(qmdata *md);
+wfq0cnf.h:int qmdclauses(qmdata *md);
+wfq1rd.h:qinfo *md2qifull(qmdata *md,qinfo *qi);
+wfq1rd.h:qmdata *file2md(char *fn,qinfo *qi);;
+wfq1rd.h:void md2qi(qmdata *md,qinfo *qi);;
+wfq1rd.h:int mdwrite(qinfo *qi,qmdata *md,FILE *g);;
+wfq1rd.h:qmdata *file2md(char *fn,qinfo *qi);
+wfq1rd.h:qmdata *file2qmdataq(qinfo *qi,FILE *ff);
+wfq1rd.h:qmdata *file2qmdatacd(qinfo *qi,FILE *ff,char cd);
+wfq1rd.h:int mdwrite(qinfo *qi,qmdata *md,FILE *g);
+wfq1rd.h:int qmdatawrite1(qmdata *md,FILE *g,int mode);
+wfq1rd.h:void md2qi(qmdata *md,qinfo *qi);
+wfq1rd.h:int qmdatawrite2string(qinfo *qi,qmdata *md,int *clausem,qcdata *info,int p,int n);
+wfqbf.h:int QBFapply(qinfo *qi,qmdata *qm);

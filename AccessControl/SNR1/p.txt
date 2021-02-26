@@ -1,0 +1,2 @@
+All-Runs Finally (End And (p2.errcode=0 Or p2.errcode=1 Or p2.errcode=2 Or p2.errcode=3 Or p2.errcode=4 Or p2.errcode=5));
+All-Runs Global (End Imply p2.errcode=0 );

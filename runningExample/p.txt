@@ -1,0 +1,2 @@
+All-Runs Finally (End And (highestBidder=2 Or highestBidder=3 OrhighestBidder=4));
+All-Runs Globally (End Imply highestBidder=4);

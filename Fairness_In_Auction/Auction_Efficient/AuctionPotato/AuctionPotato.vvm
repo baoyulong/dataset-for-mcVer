@@ -1,0 +1,150 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+owner:0..5;
+starttime:0..10;
+endtime:0..10;
+started:0..1;
+potato:0..10;
+oldpotato:0..10;
+oldhighestbindingbid:0..10;
+creatureowner:0..5;
+creature_newowner:0..5;
+canceled:0..1;
+highestbindingbid:0..10;
+highestbidder:0..5;
+blockerpay:0..1;
+blockerwithdraw:0..1;
+ownerhaswithdrawn:0..1;
+fundsbybidder[0..5]:0..10;
+
+order:0..3;
+level0:0..1;
+level1:0..1;
+level2:0..3;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+owner=0;
+starttime=0;
+endtime=0;
+started=0;
+potato=0;
+oldpotato=0;
+oldhighestbindingbid=0;
+creatureowner=0;
+creature_newowner=0;
+canceled=0;
+highestbindingbid=0;
+highestbidder=0;
+blockerpay=0;
+blockerwithdraw=0;
+for(p:[0..5]){fundsbybidder[p]=0};
+ownerhaswithdrawn=0;
+
+order=0;
+level0=0;
+level1=0;
+level2=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,0);
+p1:startauction(1,0,2,6);
+p2:placebid(2,4,3);
+p3:placebid(3,5,3);
+p4:placebid(4,6,3);
+
+
+ SPEC
+AG(!(order=3)|(highestbidder = 4));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=1)&(order=1):(order=2);
+(level2=3)&(order=2):(order=3);
+
+ MODULE constructor(msg_sender,msg_value)
+ VAR 
+pc_constructor:0..9;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1):(pc_constructor=2)&(blockerwithdraw=0);
+(pc_constructor=2):(pc_constructor=3)&(blockerpay=0);
+(pc_constructor=3):(pc_constructor=4)&(owner=msg_sender);
+(pc_constructor=4):(pc_constructor=5)&(creatureowner=owner);
+(pc_constructor=5):(pc_constructor=6)&(highestbindingbid=1);
+(pc_constructor=6):(pc_constructor=7)&(potato=0);
+(pc_constructor=7):(pc_constructor=8)&(started=0);
+(pc_constructor=8):(pc_constructor=9)&(process_control=1)&(level0=level0+1);
+
+ MODULE startauction(msg_sender,msg_value,block_timestamp,_duration_secs)
+ VAR 
+pc_startauction:0..7;
+
+ INIT 
+pc_startauction=0;
+ TRANS
+(pc_startauction=0)&(process_control=1)&(order=1):(pc_startauction=1)&(process_control=0);
+ (pc_startauction=1)&(msg_sender=owner):(pc_startauction=2);
+(pc_startauction=2)&(started=0):(pc_startauction=3);
+(pc_startauction=3):(pc_startauction=4)&(started=1);
+(pc_startauction=4):(pc_startauction=5)&(starttime=block_timestamp);
+(pc_startauction=5):(pc_startauction=6)&(endtime=block_timestamp+_duration_secs);
+(pc_startauction=1)&!(msg_sender=owner):(pc_startauction=6);
+(pc_startauction=2)&!(started=0):(pc_startauction=6);
+(pc_startauction=6):(pc_startauction=7)&(process_control=1)&(level1=level1+1);
+
+ MODULE placebid(msg_sender,msg_value,block_timestamp)
+ VAR 
+pc_placebid:0..19;
+
+ INIT 
+pc_placebid=0;
+ TRANS
+(pc_placebid=0)&(process_control=1)&(order=2):(pc_placebid=1)&(process_control=0);
+ (pc_placebid=1)&(block_timestamp>=starttime):(pc_placebid=2);
+(pc_placebid=2)&(block_timestamp<=endtime):(pc_placebid=3);
+(pc_placebid=3)&(!canceled=1):(pc_placebid=4);
+(pc_placebid=4)&(msg_sender!=owner):(pc_placebid=5);
+(pc_placebid=5)&(msg_value=highestbindingbid+potato):(pc_placebid=6);
+(pc_placebid=6)&(msg_sender!=highestbidder):(pc_placebid=7);
+(pc_placebid=7)&(started=1):(pc_placebid=8);
+(pc_placebid=8)&(blockerpay=0):(pc_placebid=9);
+(pc_placebid=9):(pc_placebid=10)&(blockerpay=1);
+(pc_placebid=10):(pc_placebid=11)&(fundsbybidder[msg_sender]=fundsbybidder[msg_sender]+highestbindingbid);
+(pc_placebid=11):(pc_placebid=12)&(fundsbybidder[highestbidder]=fundsbybidder[highestbidder]+potato);
+(pc_placebid=12):(pc_placebid=13)&(oldhighestbindingbid=highestbindingbid);
+(pc_placebid=13):(pc_placebid=14)&(highestbidder=msg_sender);
+(pc_placebid=14):(pc_placebid=15)&(highestbindingbid=highestbindingbid+potato);
+(pc_placebid=15):(pc_placebid=16)&(oldpotato=potato);
+(pc_placebid=16):(pc_placebid=17)&(potato=highestbindingbid-2);
+(pc_placebid=17):(pc_placebid=18)&(blockerpay=0);
+(pc_placebid=1)&!(block_timestamp>=starttime):(pc_placebid=18);
+(pc_placebid=2)&!(block_timestamp<=endtime):(pc_placebid=18);
+(pc_placebid=3)&!(!canceled=1):(pc_placebid=18);
+(pc_placebid=4)&!(msg_sender!=owner):(pc_placebid=18);
+(pc_placebid=5)&!(msg_value=highestbindingbid+potato):(pc_placebid=18);
+(pc_placebid=6)&!(msg_sender!=highestbidder):(pc_placebid=18);
+(pc_placebid=7)&!(started=1):(pc_placebid=18);
+(pc_placebid=8)&!(blockerpay=0):(pc_placebid=18);
+(pc_placebid=18):(pc_placebid=19)&(process_control=1)&(level2=level2+1);

@@ -1,0 +1,4 @@
+p0:AccessControlMethod(1,0,2)
+p1:policyAdd(1,0,3,1,0,2,2)
+p2:policyUpdate(2,0,3,1,0)
+p3:accessControl(2,0,3,1,2)

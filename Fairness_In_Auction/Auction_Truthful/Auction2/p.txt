@@ -1,0 +1,1 @@
+All-Runs Globally (End Imply (leader = 2 Or leader = 3 Or leader = 4))

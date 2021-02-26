@@ -1,0 +1,7 @@
+line 2:7 missing {'from', 'calldata', Identifier} at '^'
+ANTLR runtime and generated code versions disagree: 4.9!=4.7.2
+ANTLR runtime and generated code versions disagree: 4.9!=4.7.2
+
+real	0m0.885s
+user	0m0.648s
+sys	0m0.080s

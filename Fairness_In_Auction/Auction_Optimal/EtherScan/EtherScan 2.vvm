@@ -1,0 +1,137 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+auctioneer:0..5;
+auctionedeth:0..10;
+highestbid:0..10;
+secondhighestbid:0..10;
+highestbidder:0..5;
+secondhighestbidder:0..5;
+latestbidtime:0..10;
+auctionendtime:0..10;
+auctionstarted:0..1;
+auctionfinalized:0..1;
+balances[0..5]:0..10;
+
+order:0..3;
+level0:0..1;
+level1:0..1;
+level2:0..3;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+auctioneer=0;
+auctionedeth=0;
+highestbid=0;
+secondhighestbid=0;
+highestbidder=0;
+secondhighestbidder=0;
+latestbidtime=0;
+auctionendtime=0;
+for(p:[0..5]){balances[p]=0};
+auctionstarted=0;
+auctionfinalized=0;
+
+order=0;
+level0=0;
+level1=0;
+level2=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,0);
+p1:startauction(1,1,1);
+p2:bid(2,2,2);
+p3:bid(3,3,2);
+p4:bid(4,4,2);
+
+
+ SPEC
+AG(!(order=3)|(highestbidder = 4));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=1)&(order=1):(order=2);
+(level2=3)&(order=2):(order=3);
+
+ MODULE constructor(msg_sender,msg_value)
+ VAR 
+pc_constructor:0..3;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1):(pc_constructor=2)&(auctioneer=msg_sender);
+(pc_constructor=2):(pc_constructor=3)&(process_control=1)&(level0=level0+1);
+
+ MODULE startauction(msg_sender,msg_value,block_timestamp)
+ VAR 
+pc_startauction:0..8;
+
+ INIT 
+pc_startauction=0;
+ TRANS
+(pc_startauction=0)&(process_control=1)&(order=1):(pc_startauction=1)&(process_control=0);
+ (pc_startauction=1)&(!auctionstarted=1):(pc_startauction=2);
+(pc_startauction=2)&(msg_sender=auctioneer):(pc_startauction=3);
+(pc_startauction=3)&(msg_value=1):(pc_startauction=4);
+(pc_startauction=4):(pc_startauction=5)&(auctionedeth=msg_value);
+(pc_startauction=5):(pc_startauction=6)&(auctionstarted=1);
+(pc_startauction=6):(pc_startauction=7)&(auctionendtime=block_timestamp+5);
+(pc_startauction=1)&!(!auctionstarted=1):(pc_startauction=7);
+(pc_startauction=2)&!(msg_sender=auctioneer):(pc_startauction=7);
+(pc_startauction=3)&!(msg_value=1):(pc_startauction=7);
+(pc_startauction=7):(pc_startauction=8)&(process_control=1)&(level1=level1+1);
+
+ MODULE bid(msg_sender,msg_value,block_timestamp)
+ VAR 
+_newbidder:0..5;
+previousbid:0..10;
+_newbid:0..10;
+pc_bid:0..18;
+
+ INIT 
+pc_bid=0;
+ TRANS
+(pc_bid=0)&(process_control=1)&(order=2):(pc_bid=1)&(process_control=0);
+ (pc_bid=1)&(auctionstarted=1):(pc_bid=2);
+(pc_bid=2)&(block_timestamp<auctionendtime):(pc_bid=3);
+(pc_bid=3)&(msg_sender!=auctioneer):(pc_bid=4);
+(pc_bid=4)&(highestbidder!=msg_sender):(pc_bid=5);
+(pc_bid=5):(pc_bid=6)&(_newbidder=msg_sender);
+(pc_bid=6):(pc_bid=7)&(previousbid=balances[msg_sender]);
+(pc_bid=7):(pc_bid=8)&(_newbid=msg_value+previousbid);
+(pc_bid=8)&(_newbid=highestbid+2):(pc_bid=9);
+(pc_bid=9):(pc_bid=10)&(secondhighestbid=highestbid);
+(pc_bid=10):(pc_bid=11)&(secondhighestbidder=highestbidder);
+(pc_bid=11):(pc_bid=12)&(highestbid=_newbid);
+(pc_bid=12):(pc_bid=13)&(highestbidder=msg_sender);
+(pc_bid=13):(pc_bid=14)&(latestbidtime=block_timestamp);
+(pc_bid=14):(pc_bid=15)&(balances[msg_sender]=_newbid);
+(pc_bid=15)&(auctionendtime-block_timestamp<1):(pc_bid=16);
+(pc_bid=16):(pc_bid=17)&(auctionendtime =auctionendtime+1);
+
+(pc_bid=15)&!(auctionendtime-block_timestamp<1):(pc_bid=17);
+(pc_bid=1)&!(auctionstarted=1):(pc_bid=17);
+(pc_bid=2)&!(block_timestamp<auctionendtime):(pc_bid=17);
+(pc_bid=3)&!(msg_sender!=auctioneer):(pc_bid=17);
+(pc_bid=4)&!(highestbidder!=msg_sender):(pc_bid=17);
+(pc_bid=8)&!(_newbid=highestbid+2):(pc_bid=17);
+(pc_bid=17):(pc_bid=18)&(process_control=1)&(level2=level2+1);

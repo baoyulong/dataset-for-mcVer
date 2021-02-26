@@ -1,0 +1,14 @@
+VVM example1  
+VAR z:0..1;  
+INIT z=0;  
+PROC            //  Instantiate the module p0mod(i) into two processes
+    p0:p0mod(0);  
+    p1:p0mod(1);  
+SPEC  
+    AG(p0.x=0|p1.x=0);  // SPEC1: x=0 or y=0 always holds.
+    A((p1.x=0)U(p1.x=1));  // SPEC2: y=0 until y=1 holds.
+MODULE p0mod(i)  
+    VAR x:0..1;  
+    INIT x=0;  
+    TRANS x=0&z=i:  (x,z):=(x+1,1-i);  
+            x=1:      (x):=(1-x);

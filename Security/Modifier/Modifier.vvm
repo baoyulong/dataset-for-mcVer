@@ -1,0 +1,82 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+_supply:0..10;
+walletaddress:0..5;
+tokentransfer:0..1;
+_balances[0..5]:0..10;
+
+order:0..2;
+level0:0..1;
+level1:0..1;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+for(p:[0..5]){_balances[p]=0};
+_supply=0;
+walletaddress=0;
+tokentransfer=0;
+
+order=0;
+level0=0;
+level1=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,2,5,1);
+p1:disabletokentransfer(2,1);
+
+
+ SPEC
+AG(!(order=2)|(tokentransfer=1));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=1)&(order=1):(order=2);
+
+ MODULE constructor(msg_sender,msg_value,initial_balance,wallet)
+ VAR 
+pc_constructor:0..8;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1)&(wallet!=0):(pc_constructor=2);
+(pc_constructor=2)&(initial_balance!=0):(pc_constructor=3);
+(pc_constructor=3):(pc_constructor=4)&(_balances[msg_sender]=initial_balance);
+(pc_constructor=4):(pc_constructor=5)&(_supply=initial_balance);
+(pc_constructor=5):(pc_constructor=6)&(walletaddress=wallet);
+(pc_constructor=6):(pc_constructor=7)&(tokentransfer=1);
+(pc_constructor=7):(pc_constructor=8)&(process_control=1)&(level0=level0+1);
+
+ MODULE disabletokentransfer(msg_sender,msg_value)
+ VAR 
+pc_disabletokentransfer:0..5;
+
+ INIT 
+pc_disabletokentransfer=0;
+ TRANS
+(pc_disabletokentransfer=0)&(process_control=1)&(order=1):(pc_disabletokentransfer=1)&(process_control=0);
+  TRANS
+(pc_disabletokentransfer=1)&(msg_sender!=walletaddress):(pc_disabletokentransfer=2);
+(pc_disabletokentransfer=2):(pc_disabletokentransfer=3)&(tokentransfer=0);
+(pc_disabletokentransfer=3):(pc_disabletokentransfer=4)&(tokentransfer));
+(pc_disabletokentransfer=1)&!(msg_sender!=walletaddress):(pc_disabletokentransfer=4);
+(pc_disabletokentransfer=4):(pc_disabletokentransfer=5)&(process_control=1)&(level1=level1+1);

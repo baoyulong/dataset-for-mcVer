@@ -1,0 +1,256 @@
+ VVM acc
+
+ DEFINE
+
+ contract_address=0
+ maxt=10
+
+ VAR
+process_control:0..1;
+order:0..4;
+level0:0..1;
+level1:0..1;
+level2:0..1;
+level3:0..1;
+
+owner:0..6;
+subject:0..6;
+object:0..6;
+
+policies[0..2][0..2]:
+record {isvalued:0..1; permission:0..1;mininterval:0..5; tolr:0..maxt;nofr:0..3; threshold:0..3; result:0..6; err:0..5};
+behaviors[0..2]:
+record {res:0..2;action:0..2;misbehavior_str:0..1;time_b:0..maxt;timeofunblock:0..maxt};
+
+ INIT
+
+process_control=0;
+order=0;
+level0=0;
+level1=0;
+level2=0;
+level3=0;
+
+
+behaviors[0].timeofunblock=0;
+behaviors[1].timeofunblock=0;
+behaviors[2].timeofunblock=0;
+
+policies[0][0].isvalued=0;
+policies[0][0].permission=0;
+policies[0][0].threshold=0;
+policies[0][0].mininterval=0;
+policies[0][0].tolr=0;
+policies[0][0].nofr=0;
+policies[0][0].result=0;
+policies[0][0].err=0;
+
+policies[0][1].isvalued=0;
+policies[0][1].permission=0;
+policies[0][1].threshold=0;
+policies[0][1].mininterval=0;
+policies[0][1].tolr=0;
+policies[0][1].nofr=0;
+policies[0][1].result=0;
+policies[0][1].err=0;
+
+policies[0][2].isvalued=0;
+policies[0][2].permission=0;
+policies[0][2].threshold=0;
+policies[0][2].mininterval=0;
+policies[0][2].tolr=0;
+policies[0][2].nofr=0;
+policies[0][2].result=0;
+policies[0][2].err=0;
+
+policies[1][0].isvalued=0;
+policies[1][0].permission=0;
+policies[1][0].threshold=0;
+policies[1][0].mininterval=0;
+policies[1][0].tolr=0;
+policies[1][0].nofr=0;
+policies[1][0].result=0;
+policies[1][0].err=0;
+
+policies[1][1].isvalued=0;
+policies[1][1].permission=0;
+policies[1][1].threshold=0;
+policies[1][1].mininterval=0;
+policies[1][1].tolr=0;
+policies[1][1].nofr=0;
+policies[1][1].result=0;
+policies[1][1].err=0;
+
+policies[1][2].isvalued=0;
+policies[1][2].permission=0;
+policies[1][2].threshold=0;
+policies[1][2].mininterval=0;
+policies[1][2].tolr=0;
+policies[1][2].nofr=0;
+policies[1][2].result=0;
+policies[1][2].err=0;
+
+policies[2][0].isvalued=0;
+policies[2][0].permission=0;
+policies[2][0].threshold=0;
+policies[2][0].mininterval=0;
+policies[2][0].tolr=0;
+policies[2][0].nofr=0;
+policies[2][0].result=0;
+policies[2][0].err=0;
+
+policies[2][1].isvalued=0;
+policies[2][1].permission=0;
+policies[2][1].threshold=0;
+policies[2][1].mininterval=0;
+policies[2][1].tolr=0;
+policies[2][1].nofr=0;
+policies[2][1].result=0;
+policies[2][1].err=0;
+
+policies[2][2].isvalued=0;
+policies[2][2].permission=0;
+policies[2][2].threshold=0;
+policies[2][2].mininterval=0;
+policies[2][2].tolr=0;
+policies[2][2].nofr=0;
+policies[2][2].result=0;
+policies[2][2].err=0;
+
+
+
+ PROC
+p0:constructor(1,0,2);
+p1:policyadd(1,0,3,1,0,2,2);
+p2:policyupdate(2,0,3,1,1);
+p3:accesscontrol(2,0,3,1,2);
+s0:processordercontrol();
+
+
+ SPEC
+AG(!(order=4)|(p3.errcode=2));
+AF((order=4)&(p3.errcode=0|p3.errcode=1|p3.errcode=2|p3.errcode=3|p3.errcode=4|p3.errcode=5));
+
+
+
+ MODULE constructor(msg_sender_acm, msg_value_acm,subject_acm)
+
+ VAR
+pc_acm:0..4;
+
+ INIT
+pc_acm=0;
+
+ TRANS
+(pc_acm=0)&(order=0):                 (pc_acm=1)&(owner=msg_sender_acm);
+(pc_acm=1):                 (pc_acm=2)&(object=msg_sender_acm);
+(pc_acm=2):                 (pc_acm=3)&(subject=subject_acm);
+(pc_acm=3):                 (pc_acm=4)&(process_control=1)&(level0=level0+1);
+
+ MODULE policyadd(msg_sender_pa, msg_value_pa,resource_pa,action_pa,permission_pa,mininterval_pa,threshold_pa)
+
+ VAR
+ pc_pa:0..12;
+
+ INIT
+ pc_pa=0;
+
+ TRANS
+(pc_pa=0)&(process_control=1)&(order=1):         (pc_pa=1)&(process_control=0);
+(pc_pa=1)&(msg_sender_pa=owner):       (pc_pa=2);
+(pc_pa=1)&!(msg_sender_pa=owner):   (pc_pa=11);
+(pc_pa=2)&(policies[resource_pa][action_pa].isvalued=1):        (pc_pa=11);
+(pc_pa=2)&!(policies[resource_pa][action_pa].isvalued=1):       (pc_pa=3);
+(pc_pa=3):                          (pc_pa=4)&(policies[resource_pa][action_pa].permission=permission_pa);
+(pc_pa=4):                          (pc_pa=5)&(policies[resource_pa][action_pa].mininterval=mininterval_pa);
+(pc_pa=5):                          (pc_pa=6)&(policies[resource_pa][action_pa].threshold=threshold_pa);
+(pc_pa=6):                          (pc_pa=7)&(policies[resource_pa][action_pa].tolr=0);
+(pc_pa=7):                          (pc_pa=8)&(policies[resource_pa][action_pa].nofr=0);
+(pc_pa=8):                          (pc_pa=9)&(policies[resource_pa][action_pa].isvalued=1);
+(pc_pa=9):                          (pc_pa=10)&(policies[resource_pa][action_pa].result=0);
+(pc_pa=10):                         (pc_pa=11)&(behaviors[resource_pa].timeofunblock=0);
+(pc_pa=11):                         (pc_pa=12)&(process_control=1)&(level1=level1+1);
+
+ MODULE policyupdate(msg_sender_pd, msg_value_pd,resource_pd,action_pd, newpermission_pd)
+
+ VAR
+pc_pd:0..3;
+
+ INIT
+pc_pd=0;
+
+ TRANS
+(pc_pd=0)&(process_control=1)&(order=2):      (pc_pd=1)&(process_control=0);
+(pc_pd=1)&(policies[resource_pd][action_pd].isvalued=1):        (pc_pd=2)&(policies[resource_pd][action_pd].permission=newpermission_pd);
+(pc_pd=1)&!(policies[resource_pd][action_pd].isvalued=1):       (pc_pd=2);
+(pc_pd=2):              (pc_pd=3)&(process_control=1)&(level2=level2+1);
+
+ MODULE accesscontrol(msg_sender_ac,msg_value_ac,resource_ac,action_ac,time_ac)
+
+ VAR
+policycheck:0..1;
+behaviorcheck:0..1;
+errcode:0..5;
+penalty:0..5;
+pc_act:0..29;
+
+ INIT
+pc_act=0;
+
+ TRANS
+(pc_act=0)&(process_control=1)&(order=3):         (pc_act=1)&(process_control=0);
+(pc_act=1):                             (pc_act=2)&(policycheck=0);
+(pc_act=2):                             (pc_act=3)&(behaviorcheck=1);
+(pc_act=3):                             (pc_act=4)&(errcode=0);
+(pc_act=4):                             (pc_act=5)&(penalty=0);
+
+(pc_act=5)&(msg_sender_ac=subject):     (pc_act=6);
+
+    (pc_act=6)&!(behaviors[resource_ac].timeofunblock>=time_ac):    (pc_act=7);
+        (pc_act=7)&(behaviors[resource_ac].timeofunblock>0):            (pc_act=8);
+
+            (pc_act=8):                             (pc_act=9)&(behaviors[resource_ac].timeofunblock=0);
+            (pc_act=9):                             (pc_act=10)&(policies[resource_ac][action_ac].nofr=0);
+            (pc_act=10):                            (pc_act=11)&(policies[resource_ac][action_ac].tolr=0);
+        (pc_act=7)&!(behaviors[resource_ac].timeofunblock>0):           (pc_act=11);
+        
+        (pc_act=11)&(policies[resource_ac][action_ac].permission=1):   (pc_act=12)&(policycheck=1);        
+        (pc_act=11)&!(policies[resource_ac][action_ac].permission=1):  (pc_act=12)&(policycheck=0);
+        
+        (pc_act=12)&((time_ac-policies[resource_ac][action_ac].tolr)<=policies[resource_ac][action_ac].mininterval):      (pc_act=13);
+            (pc_act=13):                            (pc_act=14)&(policies[resource_ac][action_ac].nofr=policies[resource_ac][action_ac].nofr+1);
+            (pc_act=14)&(policies[resource_ac][action_ac].nofr>=policies[resource_ac][action_ac].threshold):        (pc_act=15);
+                (pc_act=15):                            (pc_act=16)&(penalty=2);
+                (pc_act=16):                            (pc_act=17)&(behaviorcheck=0);
+                (pc_act=17):                            (pc_act=18)&(behaviors[resource_ac].timeofunblock=time_ac+penalty*1);
+                (pc_act=18):                            (pc_act=20)&(behaviors[resource_ac].res=resource_ac)&(behaviors[resource_ac].action=action_ac)&(misbehavior_str=1)&(behaviors[resource_ac].time_b=time_ac)&(behaviors[resource_ac].penalty=penalty);
+            (pc_act=14)&!(policies[resource_ac][action_ac].nofr>=policies[resource_ac][action_ac].threshold):       (pc_act=20);
+        (pc_act=12)&!((time_ac-policies[resource_ac][action_ac].tolr)<=policies[resource_ac][action_ac].mininterval):     (pc_act=20)&(policies[resource_ac][action_ac].nofr=0);
+
+        (pc_act=20)&(!(policycheck=1)&(behaviorcheck=1)):                 (pc_act=21)&(errcode=2);
+        (pc_act=20)&!(!(policycheck=1)&(behaviorcheck=1)):                (pc_act=21);
+        (pc_act=21)&((policycheck=1)&!(behaviorcheck=1)):                 (pc_act=22)&(errcode=3);
+        (pc_act=21)&!((policycheck=1)&!(behaviorcheck=1)):                (pc_act=22);
+        (pc_act=22)&(!(policycheck=1)&!(behaviorcheck=1)):                (pc_act=23)&(errcode=4);
+        (pc_act=22)&!(!(policycheck=1)&!(behaviorcheck=1)):               (pc_act=23);
+
+    (pc_act=6)&(behaviors[resource_ac].timeofunblock>=time_ac):     (pc_act=23)&(errcode=1);
+    (pc_act=23):                                                    (pc_act=25)&(policies[resource_ac][action_ac].tolr=time_ac);
+
+(pc_act=5)&!(msg_sender_ac=subject):    (pc_act=24);
+(pc_act=24):                                                    (pc_act=25)&(errcode=5);
+(pc_act=25):                                                    (pc_act=26)&(policies[resource_ac][action_ac].result=(policycheck&behaviorcheck));
+(pc_act=26):                                                    (pc_act=27)&(policies[resource_ac][action_ac].err=errcode);
+(pc_act=27):                                                    (pc_act=29)&(process_control=1)&(level3=level3+1);
+
+ MODULE processordercontrol()
+
+ VAR
+
+ INIT
+
+ TRANS
+(level0=1)&(order=0):               (order=1);
+(level1=1)&(order=1):               (order=2);
+(level2=1)&(order=2):               (order=3);
+(level3=1)&(order=3):               (order=4);

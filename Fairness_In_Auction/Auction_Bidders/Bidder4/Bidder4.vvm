@@ -1,0 +1,119 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+auctionstart:0..10;
+startingprice:0..10;
+endingprice:0..10;
+auctionend:0..10;
+extensiontime:0..10;
+highestbid:0..10;
+highestbidder:0..5;
+highestbiddercc:0..10;
+highestbidiscc:0..1;
+paymentaddress:0..5;
+amount:0..10;
+ended:0..1;
+refunds[0..5]:0..10;
+
+order:0..2;
+level0:0..1;
+level1:0..4;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+auctionstart=0;
+startingprice=0;
+endingprice=0;
+auctionend=0;
+extensiontime=0;
+highestbid=0;
+highestbidder=0;
+highestbiddercc=0;
+highestbidiscc=0;
+paymentaddress=0;
+amount=0;
+ended=0;
+for(p:[0..5]){refunds[p]=0};
+
+order=0;
+level0=0;
+level1=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,0,2,1,6,1,1);
+p1:bid(2,1,3);
+p2:bid(3,2,3);
+p3:bid(4,3,3);
+p4:bid(5,4,3);
+
+
+ SPEC
+AG(!(order=2)|(highestbidder = 5));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=4)&(order=1):(order=2);
+
+ MODULE constructor(msg_sender,msg_value,_starttime,_startingprice,_duration,_extensiontime,_wallet)
+ VAR 
+pc_constructor:0..11;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1)&(_wallet!=0):(pc_constructor=2);
+(pc_constructor=2)&(_duration>0):(pc_constructor=3);
+(pc_constructor=3)&(_duration>=_extensiontime):(pc_constructor=4);
+(pc_constructor=4):(pc_constructor=5)&(auctionstart=_starttime);
+(pc_constructor=5):(pc_constructor=6)&(startingprice=_startingprice);
+(pc_constructor=6):(pc_constructor=7)&(auctionend=auctionstart+_duration);
+(pc_constructor=7):(pc_constructor=8)&(extensiontime=_extensiontime);
+(pc_constructor=8):(pc_constructor=9)&(paymentaddress=_wallet);
+(pc_constructor=9):(pc_constructor=10)&(highestbid=0);
+(pc_constructor=10):(pc_constructor=11)&(process_control=1)&(level0=level0+1);
+
+ MODULE bid(msg_sender,msg_value,block_timestamp)
+ VAR 
+pc_bid:0..13;
+
+ INIT 
+pc_bid=0;
+ TRANS
+(pc_bid=0)&(process_control=1)&(order=1):(pc_bid=1)&(process_control=0);
+ (pc_bid=1)&(block_timestamp>=auctionstart):(pc_bid=2);
+(pc_bid=2)&(block_timestamp<auctionend):(pc_bid=3);
+(pc_bid=3)&(msg_value>=highestbid+5):(pc_bid=4);
+(pc_bid=4)&(highestbid!=0):(pc_bid=5);
+(pc_bid=5):(pc_bid=6)&(refunds[highestbidder] =refunds[highestbidder]+highestbid);
+
+(pc_bid=4)&!(highestbid!=0):(pc_bid=6);
+(pc_bid=6)&(block_timestamp>auctionend-extensiontime):(pc_bid=7);
+(pc_bid=7):(pc_bid=8)&(auctionend=block_timestamp+extensiontime);
+
+(pc_bid=6)&!(block_timestamp>auctionend-extensiontime):(pc_bid=8);
+(pc_bid=8):(pc_bid=9)&(highestbidder=msg_sender);
+(pc_bid=9):(pc_bid=10)&(highestbid=msg_value);
+(pc_bid=10):(pc_bid=11)&(amount =amount+msg_value);
+(pc_bid=11):(pc_bid=12)&(highestbidiscc=0);
+(pc_bid=1)&!(block_timestamp>=auctionstart):(pc_bid=12);
+(pc_bid=2)&!(block_timestamp<auctionend):(pc_bid=12);
+(pc_bid=3)&!(msg_value>=highestbid+5):(pc_bid=12);
+(pc_bid=12):(pc_bid=13)&(process_control=1)&(level1=level1+1);

@@ -1,0 +1,139 @@
+ vvm test
+
+DEFINE
+this=0
+
+VAR
+
+process_control:0..1;
+balance[0..15]:0..15;
+duration:0..10;
+owner:0..5;
+prize:0..10;
+bids:0..10;
+leader:0..5;
+deadline:0..10;
+claimed:0..1;
+
+order:0..2;
+level0:0..1;
+level1:0..3;
+
+sta_1:0..1;
+end_1:0..1;
+rcv_1:0..5;
+amount_1:0..10;
+rtv_1:0..1;
+
+INIT
+process_control=1;
+for(p:[0..15]){balance[p]=5};
+duration=5;
+owner=0;
+prize=0;
+bids=0;
+leader=0;
+deadline=0;
+claimed=0;
+
+order=0;
+level0=0;
+level1=0;
+
+sta_1=0;
+end_1=0;
+rcv_1=0;
+amount_1=0;
+rtv_1=0;
+
+ PROC
+o1:processordercontrol();
+p0:constructor(1,5,2);
+p1:bid(2,2,3);
+p2:bid(3,3,3);
+p3:bid(4,4,3);
+s0:send_1();
+
+
+ SPEC
+AG(!(order=2)|((leader = 2 | leader = 3 | leader = 4));
+
+
+
+
+ MODULE processordercontrol()
+
+VAR
+
+INIT
+
+TRANS
+(level0=1)&(order=0):(order=1);
+(level1=3)&(order=1):(order=2);
+
+ MODULE constructor(msg_sender,msg_value,block_timestamp)
+ VAR 
+pc_constructor:0..8;
+
+ INIT 
+pc_constructor=0;
+ TRANS
+(pc_constructor=0)&(order=0):(pc_constructor=1);
+(pc_constructor=1):(pc_constructor=2)&(owner=msg_sender);
+(pc_constructor=2):(pc_constructor=3)&(prize=msg_value);
+(pc_constructor=3):(pc_constructor=4)&(bids=0);
+(pc_constructor=4):(pc_constructor=5)&(leader=msg_sender);
+(pc_constructor=5):(pc_constructor=6)&(deadline=block_timestamp+duration);
+(pc_constructor=6):(pc_constructor=7)&(claimed=0);
+(pc_constructor=7):(pc_constructor=8)&(process_control=1)&(level0=level0+1);
+
+ MODULE bid(msg_sender,msg_value,block_timestamp)
+ VAR 
+pc_bid:0..9;
+
+ INIT 
+pc_bid=0;
+ TRANS
+(pc_bid=0)&(process_control=1)&(order=1):(pc_bid=1)&(process_control=0);
+ (pc_bid=1)&(block_timestamp<=deadline):(pc_bid=2);
+(pc_bid=2)&(msg_value=bids+4):(pc_bid=3);
+(pc_bid=3):(pc_bid=4)&(rcv_1=owner)&(amount_1=msg_value)&(sta_1=1);
+(pc_bid=4)&(end_1=1):(pc_bid=5)&(end_1=0);
+(pc_bid=5):(pc_bid=6)&(bids=bids+1);
+(pc_bid=6):(pc_bid=7)&(leader=msg_sender);
+(pc_bid=7):(pc_bid=8)&(deadline=block_timestamp+duration);
+(pc_bid=1)&!(block_timestamp<=deadline):(pc_bid=8);
+(pc_bid=2)&!(msg_value=bids+4):(pc_bid=8);
+(pc_bid=8):(pc_bid=9)&(process_control=1)&(level1=level1+1);
+
+ MODULE send_1()
+ 
+ VAR
+pc_send1:0..4;
+ 
+ INIT
+pc_send1=0;
+ 
+ TRANS
+(pc_send1=0)&(sta_1=1):(pc_send1=1);
+(pc_send1=1):(pc_send1=2)&(rtv_1=1);
+(pc_send1=1):(pc_send1=2)&(rtv_1=0);
+(pc_send1=2)&(rtv_1=1):(pc_send1=3);
+(pc_send1=3)&(rcv_1=0):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[0]=balance[0]+amount_1);
+(pc_send1=3)&(rcv_1=1):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[1]=balance[1]+amount_1);
+(pc_send1=3)&(rcv_1=2):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[2]=balance[2]+amount_1);
+(pc_send1=3)&(rcv_1=3):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[3]=balance[3]+amount_1);
+(pc_send1=3)&(rcv_1=4):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[4]=balance[4]+amount_1);
+(pc_send1=3)&(rcv_1=5):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[5]=balance[5]+amount_1);
+(pc_send1=3)&(rcv_1=6):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[6]=balance[6]+amount_1);
+(pc_send1=3)&(rcv_1=7):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[7]=balance[7]+amount_1);
+(pc_send1=3)&(rcv_1=8):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[8]=balance[8]+amount_1);
+(pc_send1=3)&(rcv_1=9):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[9]=balance[9]+amount_1);
+(pc_send1=3)&(rcv_1=10):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[10]=balance[10]+amount_1);
+(pc_send1=3)&(rcv_1=11):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[11]=balance[11]+amount_1);
+(pc_send1=3)&(rcv_1=12):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[12]=balance[12]+amount_1);
+(pc_send1=3)&(rcv_1=13):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[13]=balance[13]+amount_1);
+(pc_send1=3)&(rcv_1=14):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[14]=balance[14]+amount_1);
+(pc_send1=3)&(rcv_1=15):(pc_send1=4)&(balance[0]=balance[0]-amount_1)&(balance[15]=balance[15]+amount_1);
+(pc_send1=2)&(rtv_1=0):(pc_send1=4);
+(pc_send1=4):(pc_send1=0)&(end_1=1)&(sta_1=0);

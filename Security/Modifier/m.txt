@@ -1,0 +1,2 @@
+p0:constructor(1,2,5,1)
+p1:disableTokenTransfer(2,1)

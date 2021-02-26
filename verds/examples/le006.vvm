@@ -1,0 +1,42 @@
+VVM     le006
+DEFINE 
+        N	=4
+        NL	=3
+	ic	=(p[0].i!=p[1].i)&(p[0].i!=p[2].i)&(p[1].i!=p[2].i)&\
+		 (p[0].i!=p[3].i)&(p[1].i!=p[3].i)&(p[2].i!=p[3].i)
+        nid	=(pid+1)%N
+        mr	=(m[pid]!=0)
+        ms	=(m[nid]=0)
+        nk	=(n[pid]=0)
+VAR
+        m[0..NL]:0..N;
+	n[0..NL]:0..1;
+INIT
+	ic;
+PROC 	
+	p[0..NL]:p0m();
+SPEC 
+        AG(!(p[0].k=1)|(AF(n[1]=1)|(p[1].k=1))); //31928//-v7245
+        A(p[0].k=0 U AG p[0].k=1); // //-v7992
+	EF(TRUE); //
+	AF(FALSE); //
+
+MODULE	p0m()
+VAR	
+	k:0..1;
+	i:0..N;
+INIT	
+	k=0;
+	m[pid]=0;
+	n[pid]=0;
+	i>=1;
+	i<=N;
+TRANS 	
+        k=0&!mr&ms:           	(m[nid],n[nid]):=(i,0);
+        k=0&mr&nk&m[pid]>i:   	(m[pid],n[pid]):=(0,0);
+        k=0&mr&nk&m[pid]<i&ms:	(m[nid],n[nid],m[pid],n[pid]):=(m[pid],0,0,0);
+        k=0&mr&nk&m[pid]=i&ms:	(m[nid],n[nid],m[pid],n[pid],k):=(i,1,0,0,1); 
+        k=0&mr&!nk&ms:     (m[nid],n[nid],m[pid],n[pid],k):=(m[pid],1,0,0,1);
+        k=1&mr:               	(m[pid],n[pid]):=(0,0);
+FAIRNESS
+        k=1|m[nid]!=0;

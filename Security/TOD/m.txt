@@ -1,0 +1,3 @@
+p0:EthTxOrderDependenceMinimal(1,0)
+p1:setReward1(1,3)
+p2:setReward(1,1)|p3:claimReward(2,0,3)

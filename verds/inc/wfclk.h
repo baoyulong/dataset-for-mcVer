@@ -1,0 +1,11 @@
+tree *clkcheckvlist(tree *prog);
+int clkcheckcst(char *node,tree *t,int i);
+int gcd(int a,int b)  ;
+tree *fractal(float a);
+void treesubstitute(tree *t,char *node,tree *b);
+void list2cn(tree *t);
+tree *intcheckvlist(module *mm,tree *prog,char *rt);
+int intcheckcst(char *node,tree *t);
+tree *intconstruct(tree *t,tree *vlist,int k);
+int intcheckcstprog(tree *prog);
+extern char *PAR_satsolver;;
