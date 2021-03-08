@@ -6,22 +6,22 @@
 
 The project includs the dataset for the manuscript  < **mcVer: A Model Checking Based Framework for Smart Contract Verification** >. The contents contained in each folder are explained as follows：
 
-- VVMExample
+- vvmEx
   
-  - In this folder, the vvm( VVMExample.vvm ) code of the example for inlustrating the composition of VML are included.
-- runningExample
+  - In this folder, the vvm(vvmEx.vvm ) code of the example for inlustrating the composition of VML are included.
+- aucEx
   
-  - In this folder, the solidity source code( runningExample.sol ), vvm( runningExample.vvm ) code, property definition( p.txt ), scenario configuration( m.txt ) of the running example for the manuscript are included.
+  - In this folder, the solidity source code( [aucEx.sol](https://solidity-cn.readthedocs.io/zh/develop/solidity-by-example.html) ), vvm( aucEx.vvm ) code, property definition( Property.txt ), scenario configuration( Scenario.txt ) of the running example for the manuscript are included.
 - Fairness_In_Auction
-  - In this folder, it includes mutipul folders, files in folder Auction_Bidders are used to test the performance of mcVer compared to **faircon**, files in folder Auction_Efficient, Auction_Optimal, Auction_Truthful are used to check efficiency, optimal, truful property for the auction contract, respectively.
+  - In this folder, it includes mutipul folders, files in folder Auction_Bidders are used to test the performance of mcVer compared to [**FAIRCON**](https://github.com/ntu-SRSLab/FairCon) files in folder Auction_Efficient, Auction_Optimal, Auction_Truthful are used to check efficiency, optimal, truful property for the auction contract, respectively.
   - In each subfolder for each auction contract, the solidity source code(.sol), vvm code(.vvm), property definition( p.txt ), scenario configuration( m.txt ), counter example file(.html) are included, the time used to translate solidity to vvm is recorded in t1.txt, the time used to verify the property is recorded in t2.txt.
   - The final results for mcVer are recored in re.xlsx, the results for faircon are recorded in faircon.xlsx.
 - Security
   
-  - In this folder, each sub-folder is a sample to verify the corresponding security problem. In each sub-folder, the solidity source code( runningExample.sol ), vvm( runningExample.vvm ) code, property definition( p.txt ), scenario configuration( m.txt ) are included.
+  - In this folder, each sub-folder is a sample to verify the corresponding security problem. In each sub-folder, the solidity source code( DoS.sol ), vvm(DoS.vvm ) code, property definition( Property.txt ), scenario configuration( m.txt ) are included.
 - Access Control
   
-  - In this folder, each sub-folder represents a scenario used in the manuscript. In each sub-folder,  the solidity source code( runningExample.sol ), vvm( runningExample.vvm ) code, property definition( p.txt ), scenario configuration( m.txt ) are included.
+  - In this folder, each sub-folder represents a scenario used in the manuscript. In each sub-folder,  the solidity source code( acc.sol ), vvm( SNR1.vvm ) code, property definition( Property.txt ), scenario configuration( Scenario.txt) are included.
 - verds
   - In this folder, the model checking tool VERDS is included. The running environment should be Linux or CentOS.
 
